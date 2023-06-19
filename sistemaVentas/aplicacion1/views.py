@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login
 from aplicacion1.form import FormularioLogin, FormularioRegistro
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from .models import UserProfile
 # Create your views here.
 
@@ -12,8 +15,16 @@ class LandingPage(TemplateView):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
     
-class Usuarios(TemplateView):
+class Usuarios(TemplateView, PermissionRequiredMixin):
     template_name = "aplicacion1/usuarios.html"
+    permission_required = 'aplicacion1.permiso_trabajador'
+    raise_exception = True
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='trabajadores').exists():
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         titulo = "Lista de Usuarios"

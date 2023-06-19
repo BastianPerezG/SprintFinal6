@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 class Permisos(models.Model):
     class Meta:
         permissions = (
-            ('trabajador', 'Permisos exclusivo de los trabajadores'),
-            ( 'cliente', 'Permisos exclusivo de los clientes')
+            ('permiso_trabajador', 'Permisos exclusivo de los trabajadores'),
+            ( 'permiso_cliente', 'Permisos exclusivo de los clientes')
         )
 
 class UserProfile(models.Model):

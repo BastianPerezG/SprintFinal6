@@ -101,7 +101,7 @@ class FormularioRegistro(UserCreationForm):
     group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
 
     def ruta_fotoPerfil(self):
-        return '/assets/img/foto_perfil.png'
+        return '/profile_images/foto_perfil.png'
     
     class Meta(UserCreationForm.Meta):
         model = User
