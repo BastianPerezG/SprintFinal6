@@ -18,11 +18,11 @@
         <tbody>
             {% for usuario in usuarios %}
             <tr>
-                {% if usuario.image %}
-                <td><img src="{{ usuario.image }}" alt="Imagen de perfil de {{ usuario.first_name }} {{ usuario.last_name }}" width="50px"></td>
-                {%else%}
+                {% if usuario.userprofile.image %}
+                <td><img src="{{ usuario.userprofile.image.url }}" alt="Imagen de perfil de {{ usuario.first_name }} {{ usuario.last_name }}" width="50px"></td>
+                {% else %}
                 <td><img src="{% static 'assets/img/foto_perfil.png' %}" alt="Imagen de perfil de {{usuario.first_name}} {{usuario.last_name}}" width="50px"></td>
-                {%endif%}
+                {% endif %}
                 <td>{{usuario.username}}</td>
                 <td>{{usuario.first_name}}</td>
                 <td>{{usuario.last_name}}</td>

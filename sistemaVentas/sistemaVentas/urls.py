@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from aplicacion1.views import LandingPage, Usuarios,  PaginaRestringidaView, RegistroView
+from aplicacion1.views import LandingPage, Usuarios, PaginaRestringidaView, RegistroView
 from django.urls import include
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +29,11 @@ urlpatterns = [
     path("usuarios/", Usuarios.as_view(), name="usuarios"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
-    path("paginarestringida", login_required(PaginaRestringidaView.as_view()), name="paginaRestringida"),
+    path("catalogoProductos/", login_required(PaginaRestringidaView.as_view()), name="catalogoProductos"),
     path("registrarse", RegistroView.as_view(), name="registrarse"),
 ]
+
+# Configuración para servir archivos de medios en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

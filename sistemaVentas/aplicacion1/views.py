@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from aplicacion1.form import FormularioLogin, FormularioRegistro
 from django.contrib.auth.models import User
-from django.conf import settings
+from .models import UserProfile
 # Create your views here.
 
 class LandingPage(TemplateView):
@@ -39,20 +37,18 @@ class IngresoView(TemplateView):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('inicio')
-            form.add_error('username', 'Credenciales incorrectas')
-            return render(request, self.template_name, { "form": form })
-        else:
-            return render(request, self.template_name, { "form": form })
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('catalogoProductos')
+                else:
+                    form.add_error('username', 'Credenciales incorrectas')
+        return render(request, self.template_name, { "form": form })
         
 
 class PaginaRestringidaView(TemplateView):
     template_name = 'aplicacion1/paginaRestringida.html'
 
-    #@method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         title = "Sitio Interno"
         productos = [
@@ -125,13 +121,17 @@ class RegistroView(TemplateView):
             group.user_set.add(user)
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
-            nombre = form.cleaned_data["first_name"]
-            apellido = form.cleaned_data["last_name"]
             user = authenticate(username=username, password=password)
             if 'image' in request.FILES:
-                user.image = request.FILES['image']
+                image = request.FILES.get('image')
             else:
-                user.image = form.ruta_fotoPerfil()
+                image = form.ruta_fotoPerfil()
+            # Crear una instancia de UserProfile y asociarla con el usuario
+            profile = UserProfile(user=user, image=image)
+            profile.save()
+
+            # Asignar el perfil al usuario
+            user.userprofile = profile
             user.save()
             mensajes = {"enviado": True, "resultado": "Has creado un nuevo usuario exitosamente"}
         else:
