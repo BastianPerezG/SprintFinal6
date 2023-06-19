@@ -3,8 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from aplicacion1.form import FormularioUsuarios, FormularioLogin, FormularioRegistro
-from aplicacion1.models import FormularioUsuariosDB
+from aplicacion1.form import FormularioLogin, FormularioRegistro
 from django.contrib.auth.models import User
 from django.conf import settings
 # Create your views here.
@@ -20,47 +19,6 @@ class Usuarios(TemplateView):
 
     def get(self, request, *args, **kwargs):
         titulo = "Lista de Usuarios"
-        # usuarios = [
-        # {   
-        #     "nombreUsuario": "jsmith",
-        #     "nombre": "John",
-        #     "apellido": "Smith",
-        #     "edad": 30,
-        #     "email": "jsmith@example.com",
-        #     "imagen": "https://randomuser.me/api/portraits/men/1.jpg"
-        # },
-        # {   
-        #     "nombreUsuario": "ejohnson",
-        #     "nombre": "Emily",
-        #     "apellido": "Johnson",
-        #     "edad": 25,
-        #     "email": "ejohnson@example.com",
-        #     "imagen": "https://randomuser.me/api/portraits/women/1.jpg"
-        # },
-        # {   
-        #     "nombreUsuario": "mbrown",
-        #     "nombre": "Michael",
-        #     "apellido": "Brown",
-        #     "edad": 35,
-        #     "email": "mbrown@example.com",
-        #     "imagen": "https://randomuser.me/api/portraits/men/2.jpg"
-        # },
-        # {   
-        #     "nombreUsuario": "odavis",
-        #     "nombre": "Olivia",
-        #     "apellido": "Davis",
-        #     "edad": 28,
-        #     "email": "odavis@example.com",
-        #     "imagen": "https://randomuser.me/api/portraits/women/2.jpg"
-        # },
-        # {   
-        #     "nombreUsuario": "awilson",
-        #     "nombre": "Alexander",
-        #     "apellido": "Wilson",
-        #     "edad": 32,
-        #     "email": "awilson@example.com",
-        #     "imagen": "https://randomuser.me/api/portraits/men/3.jpg"
-        # }]
         usuarios = User.objects.all()
         contexto = {
             "titulo": titulo,
@@ -68,46 +26,6 @@ class Usuarios(TemplateView):
         }
         return render(request, self.template_name, contexto)
     
-
-class FormularioUsuariosView(TemplateView):
-    template_name = 'aplicacion1/formularioUsuarios.html'
-
-    def get(self, request, *args, **kwargs):
-        title = "Formulario de ingreso de usuarios"
-        formulario = FormularioUsuarios()
-        return render(request, self.template_name, {"formulario": formulario, "title": title})
-    
-    def post(self, request, *args, **kwargs):
-        title = "Formulario de ingreso de usuarios"
-        form = FormularioUsuarios(request.POST)
-        mensajes = {
-            "enviado" : True,
-            "resultado": None
-        }
-        if form.is_valid():
-            rut = form.cleaned_data["rut"]
-            nombreUsuario = form.cleaned_data["nombreUsuario"]
-            nombre = form.cleaned_data["nombre"]
-            apellido = form.cleaned_data["apellido"]
-            email = form.cleaned_data["email"]
-
-
-            registro = FormularioUsuariosDB(
-                rut = rut,
-                nombreUsuario = nombreUsuario,
-                nombre = nombre,
-                apellido = apellido,
-                email = email
-            )
-            registro.save()
-            mensajes = {"enviado": True, "resultado": "Has creado un nuevo usuario exitosamente."}
-        else:
-            mensajes = {"enviado": False, "resultado": form.errors}
-        
-        return render(request, self.template_name, {"formulario": form, "mensajes": mensajes, "title": title})
-    
-
-
 class IngresoView(TemplateView):
     template_name = 'registration/login.html'
 
@@ -137,10 +55,60 @@ class PaginaRestringidaView(TemplateView):
     #@method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         title = "Sitio Interno"
+        productos = [
+            {
+                'imagen': "assets/img/producto1.png",
+                'codigo': '019452',
+                'nombre': 'Lavalozas Ecológico Fuzol',
+                'precio': 1890
+            },
+            {
+                'imagen': "assets/img/producto2.jpg",
+                'codigo': '064532',
+                'nombre': 'Antigrasas Mr. Músculo',
+                'precio': 3550
+            },
+            {
+                'imagen': "assets/img/producto3.jpg",
+                'codigo': '033542',
+                'nombre': 'Antigrasas Multiuso KH-7',
+                'precio': 4290
+            },
+            {
+                'imagen': "assets/img/producto4.jpg",
+                'codigo': '075266',
+                'nombre': 'Limpiador de piso Clorox',
+                'precio': 2550
+            },
+            {
+                'imagen': "assets/img/producto5.jpg",
+                'codigo': '019452',
+                'nombre': 'Limpiador de piso Igenix',
+                'precio': 2590
+            },
+            {
+                'imagen': "assets/img/producto6.png",
+                'codigo': '022314',
+                'nombre': 'Detergente líquido Ariel',
+                'precio': 4500
+            },
+            {
+                'imagen': "assets/img/producto7.jpg",
+                'codigo': '085512',
+                'nombre': 'Detergente en polvo Omo',
+                'precio': 4200
+            },
+            {
+                'imagen': "assets/img/producto8.jpg",
+                'codigo': '005711',
+                'nombre': 'Bolsa ecológica Superior',
+                'precio': 460
+            },
+            ]
 
         primer_nombre = request.user.first_name or 'Usuari@ sin nombre registrado.'
         segundo_nombre = request.user.last_name
-        return render(request, self.template_name, {'primer_nombre' : primer_nombre, 'segundo_nombre' : segundo_nombre, 'title' : title,})
+        return render(request, self.template_name, {'primer_nombre' : primer_nombre, 'segundo_nombre' : segundo_nombre, 'title' : title, 'productos': productos})
     
 class RegistroView(TemplateView):
     template_name = 'registration/registro.html'
@@ -163,7 +131,6 @@ class RegistroView(TemplateView):
             if 'image' in request.FILES:
                 user.image = request.FILES['image']
             else:
-                # Asignar la imagen predeterminada si no se proporciona ninguna
                 user.image = form.ruta_fotoPerfil()
             user.save()
             mensajes = {"enviado": True, "resultado": "Has creado un nuevo usuario exitosamente"}
