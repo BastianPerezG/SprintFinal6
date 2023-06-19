@@ -22,3 +22,11 @@ De manera predeterminada, puede probar con odavis o awilson como clientes y csup
 Por otro lado, en este sprint final también se hizo dinámico todos los templates, por ejemplo, el template de paginaRestringida que es la que muestra los productos. Además, de reduccion de código que ya no se utiliza que viene de los desafíos anteriores del mismo módulo.
 
 Por último, se adjuntan las librerías que se utilizaron en este proyecto destacar PILLOW, que fue la que me permitió subir fotos de perfil para los usuarios.
+
+asgiref==3.7.2
+Django==4.2.2
+Pillow==9.5.0
+sqlparse==0.4.4
+typing_extensions==4.6.3
+tzdata==2023.3
+
